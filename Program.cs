@@ -75,7 +75,13 @@ namespace Excel2TextDiff
                 startInfo.FileName = diffProgame;
                 string argsFormation = options.DiffProgramArgumentFormat ?? "/base:{0} /mine:{1}";
                 startInfo.Arguments = string.Format(argsFormation, tempTxt1, tempTxt2);
+                startInfo.UseShellExecute = false;
+                startInfo.CreateNoWindow = true;
                 Process.Start(startInfo);
+
+                System.Threading.Thread.Sleep(5000);
+                File.Delete(tempTxt1);
+                File.Delete(tempTxt2);
             }
         }
 
