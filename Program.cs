@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Excel2TextDiff
 {
@@ -12,7 +14,7 @@ namespace Excel2TextDiff
         [Option('t', SetName = "transform", HelpText = "transform excel to text file")]
         public bool IsTransform { get; set; }
 
-        [Option('d', SetName = "diff", HelpText = "transform and diff file")]
+        [Option('d', SetName = "diff", HelpText = "transform and diff file",Default =true)]
         public bool IsDiff { get; set; }
 
         [Option('p', SetName = "diff", Required = false, HelpText = "3rd diff program. default TortoiseMerge")]
@@ -33,13 +35,14 @@ namespace Excel2TextDiff
         };
     }
 
+  
     class Program
     {
         static void Main(string[] args)
         {
             var options = ParseOptions(args);
 
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            //System.Text.Encoding.RegisterProvider(MyEncodingProvider.Instance);
             var writer = new Excel2TextWriter();
 
             if (options.IsTransform)

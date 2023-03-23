@@ -9,17 +9,19 @@ namespace Excel2TextDiff
         public void TransformToTextAndSave(string excelFile, string outputTextFile)
         {
             var lines = new List<string>();
-            using var excelFileStream = new FileStream(excelFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            string ext = Path.GetExtension(excelFile);
-            using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(excelFileStream) : ExcelReaderFactory.CreateCsvReader(excelFileStream))
+            using (var excelFileStream = new FileStream(excelFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                do
+                string ext = Path.GetExtension(excelFile);
+                using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(excelFileStream) : ExcelReaderFactory.CreateCsvReader(excelFileStream))
                 {
-                    lines.Add($"===[{reader.Name ?? ""}]===");
-                    LoadRows(reader, lines);
-                } while (reader.NextResult());
+                    do
+                    {
+                        lines.Add($"===[{reader.Name ?? ""}]===");
+                        LoadRows(reader, lines);
+                    } while (reader.NextResult());
+                }
+                File.WriteAllLines(outputTextFile, lines, System.Text.Encoding.UTF8);
             }
-            File.WriteAllLines(outputTextFile, lines, System.Text.Encoding.UTF8);
         }
 
         private void LoadRows(IExcelDataReader reader, List<string> lines)
@@ -37,7 +39,7 @@ namespace Excel2TextDiff
                 int lastNotEmptyIndex = row.FindLastIndex(s => !string.IsNullOrEmpty(s));
                 if (lastNotEmptyIndex >= 0)
                 {
-                    lines.Add(string.Join(',', row.GetRange(0, lastNotEmptyIndex + 1)));
+                    lines.Add(string.Join(",", row.GetRange(0, lastNotEmptyIndex + 1)));
                 }
                 else
                 {
